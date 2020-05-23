@@ -21,11 +21,13 @@
   <dependencyManagement>
   	
   	<dependencies>
-	  	<dependency>
-			    <groupId>com.oracle</groupId>
-			    <artifactId>ojdbc14</artifactId>
-			    <version>10.2.0.4.0</version>
+	  	<!-- https://mvnrepository.com/artifact/com.oracle/ojdbc7 -->
+		<dependency>
+		    <groupId>com.oracle</groupId>
+		    <artifactId>ojdbc7</artifactId>
+		    <version>12.1.0</version>
 		</dependency>
+
   		<dependency>
 		    <groupId>org.apache.logging.log4j</groupId>
 		    <artifactId>log4j-core</artifactId>
