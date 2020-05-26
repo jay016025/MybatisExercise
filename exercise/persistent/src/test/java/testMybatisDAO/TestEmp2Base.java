@@ -9,14 +9,14 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.jupiter.api.Test;
 
-import idv.jay.test.Vo.Emp2;
+import idv.jay.persistent.Vo.Emp2;
 
 /**
  * 測試emp2 DAO method
  * @author User
  * date 2020-05-23
  */
-public class TestEmp2DAO {
+public class TestEmp2Base {
 
 	private final String RESOURCE_NAME = "SqlMapConfig.xml";
 	
@@ -81,8 +81,7 @@ public class TestEmp2DAO {
 		}
 		
 		Emp2 emp = new Emp2();
-		emp.setEmpno(7015);
-		emp.setEname("jay");
+		emp.setEname("jay2");
 		emp.setComm(100.4);
 		emp.setJob("工程師");
 		emp.setSal(100.5);
@@ -91,8 +90,55 @@ public class TestEmp2DAO {
 		
 		SqlSession sqlSession = sqlSessionFactory.openSession();
 		sqlSession.insert("testMybatis.EMP2.insertEmp2", emp);
-		
+//		印出自增主鍵
+		System.out.println(emp.getEmpno());
 //		需要自己commit， 預設autoCommit = false
+		sqlSession.commit();
+		sqlSession.close();
+	}
+	
+	/**
+	 * 根據員工編號刪除員工
+	 */
+	@Test
+	public void deleteEmp() {
+		SqlSessionFactory sqlSessionFactory = null;
+		try {
+			sqlSessionFactory = 
+					new SqlSessionFactoryBuilder().build(Resources.getResourceAsStream(RESOURCE_NAME));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		SqlSession sqlSession = sqlSessionFactory.openSession();
+		sqlSession.delete("testMybatis.EMP2.deleteEmp", new Integer(7017));
+		sqlSession.commit();
+		sqlSession.close();
+	}
+	
+	/**
+	 * 根據員工編號更改員工資訊
+	 */
+	@Test
+	public void updateEmp() {
+		SqlSessionFactory sqlSessionFactory = null;
+		try {
+			sqlSessionFactory = 
+					new SqlSessionFactoryBuilder().build(Resources.getResourceAsStream(RESOURCE_NAME));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		SqlSession sqlSession = sqlSessionFactory.openSession();
+		
+		Emp2 emp = new Emp2();
+		emp.setEmpno(7015);
+		emp.setEname("jay2");
+		emp.setComm(100.4);
+		emp.setJob("工程師");
+		emp.setSal(100.5);
+		emp.setHiredate(Date.valueOf("2020-05-23"));
+		emp.setDeptno(10);
+		
+		sqlSession.update("testMybatis.EMP2.updateEmp", emp);
 		sqlSession.commit();
 		sqlSession.close();
 	}

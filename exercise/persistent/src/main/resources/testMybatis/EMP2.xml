@@ -32,7 +32,31 @@
 	
 	<!-- 新增員工 -->
 	<!-- 注意:在此寫sql不能加';' -->
+	<!-- 自增主見值綁定、回傳:
+		 keyProperty: 將查詢到的主鍵值設置到 parameterType指定物件的哪個屬性
+		 order: selectKey的執行順序，相對於insert來說
+		 resultType: 指定selectKey的回傳結果 -->
 	<insert id="insertEmp2" parameterType="idv.jay.test.Vo.Emp2">
-		insert into emp2(empno, ename, job, hiredate, sal, comm, deptno) values(#{empno}, #{ename}, #{job}, #{hiredate}, #{sal}, #{comm}, #{deptno})
+		<selectKey keyProperty="empno" order="AFTER" resultType="java.lang.Integer">
+			select emp2_seq.currval from dual
+		</selectKey>
+		insert into emp2(empno, ename, job, hiredate, sal, comm, deptno) values(emp2_seq.nextval, #{ename}, #{job}, #{hiredate}, #{sal}, #{comm}, #{deptno})
 	</insert>
+	
+	<!-- 刪除員工 -->
+	<delete id="deleteEmp" parameterType="java.lang.Integer">
+		delete from emp2 where empno = #{empno}
+	</delete>
+	
+	<!-- 更改員工資訊 -->
+	<!-- 注意: 必須要有主鍵
+			      用<set>標籤會自動幫串接set -->
+	<update id="updateEmp" parameterType="idv.jay.test.Vo.Emp2">
+		update emp2
+		<set>
+			ename = #{ename}, job = #{job}, hiredate = #{hiredate}, sal = #{sal},
+			comm = #{comm}, deptno = #{deptno}
+		</set>
+		where empno = #{empno}
+	</update>
 </mapper>

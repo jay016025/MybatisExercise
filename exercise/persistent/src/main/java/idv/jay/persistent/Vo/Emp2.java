@@ -1,4 +1,4 @@
-package idv.jay.test.Vo;
+package idv.jay.persistent.Vo;
 
 import java.io.Serializable;
 import java.sql.Date;
