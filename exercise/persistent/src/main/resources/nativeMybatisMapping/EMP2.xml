@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<!-- namespace命名，作用是對sql做分類隔離管理
+	 注意:使用Mapper代理方法開發，namespace有特殊重要的作用 -->
+<mapper namespace="testMybatis.EMP2">
+
+	<!-- 在此文件中會設置許多sql -->
+	<!-- 需求:通過id查詢員工資料 -->
+	<!-- 通過select標籤進行DB查詢 
+		id:標識映射文中的sql，將sql封裝到mappedStatement，所以id稱為Statemaent的id	-->
+	
+	<!-- parameterType:指定輸入參數的型別 。
+		 #{}:表示一個佔位符號，等同於'?'。
+		 #{empno}:其中的empno為接受輸入的參數名稱，如輸入參數型態為基本型別，
+		 參數名稱可以任意。-->
+	<!-- resultType:指定sql輸出結果所映射的java物件的型別 -->
+	
+	<select id="findEMP2ById" parameterType="int" resultType="idv.jay.persistent.Vo.Emp2">
+		select * from emp2 where empno = #{empno}
+	</select>
+	
+	<!-- 根據員工姓名模糊查詢員工，可能有多筆結果 -->
+	<!-- resultType:指定的是查詢結果單筆所映射的java物件型態 
+		 ${}:表示串接sql字串，將接收到的參數不加任何修飾串接到sql中。 
+		 使用${}會引起sql injection。
+		 使用${value}:如傳入的參數型態為基本型別，則${}中只能使用value -->
+	<select id="findEMP2ByName" parameterType="java.lang.String" resultType="idv.jay.persistent.Vo.Emp2">
+		select * from emp2 where ename like '%${value}%'
+	</select>
+	
+	<!-- 新增員工 -->
+	<!-- 注意:在此寫sql不能加';' -->
+	<!-- 自增主見值綁定、回傳:
+		 keyProperty: 將查詢到的主鍵值設置到 parameterType指定物件的哪個屬性
+		 order: selectKey的執行順序，相對於insert來說
+		 resultType: 指定selectKey的回傳結果 -->
+	<insert id="insertEmp2" parameterType="idv.jay.persistent.Vo.Emp2">
+		<selectKey keyProperty="empno" order="AFTER" resultType="java.lang.Integer">
+			select emp2_seq.currval from dual
+		</selectKey>
+		insert into emp2(empno, ename, job, hiredate, sal, comm, deptno) values(emp2_seq.nextval, #{ename}, #{job}, #{hiredate}, #{sal}, #{comm}, #{deptno})
+	</insert>
+	
+	<!-- 刪除員工 -->
+	<delete id="deleteEmp" parameterType="java.lang.Integer">
+		delete from emp2 where empno = #{empno}
+	</delete>
+	
+	<!-- 更改員工資訊 -->
+	<!-- 注意: 必須要有主鍵
+			      用<set>標籤會自動幫串接set -->
+	<update id="updateEmp" parameterType="idv.jay.persistent.Vo.Emp2">
+		update emp2
+		<set>
+			ename = #{ename}, job = #{job}, hiredate = #{hiredate}, sal = #{sal},
+			comm = #{comm}, deptno = #{deptno}
+		</set>
+		where empno = #{empno}
+	</update>
+</mapper>
