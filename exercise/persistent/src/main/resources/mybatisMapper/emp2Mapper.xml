@@ -11,14 +11,87 @@
 	<!-- 通過select標籤進行DB查詢 
 		id:標識映射文中的sql，將sql封裝到mappedStatement，所以id稱為Statemaent的id	-->
 	
+	
+	<!-- 定義sql片段
+		id:此sql片段的名稱
+		經驗:針對單個表定義sql片段，重複使用性才高
+			 在sql片段中不要寫入where
+	 -->
+	<sql id="query_emp_where">
+		<if test="ename != null and ename != ''">
+			and ename like '%${ename}%'
+		</if>
+		<if test="deptno != null">
+			and deptno = #{deptno}
+		</if>
+	</sql>
+	
+	<!-- 定義resultMap
+		將select empno no, ename name from emp2和Emp2.java進行映射
+		type: resultMap最終映射對象的型別，可以使用別名
+		id: 對resultMap的名稱命名
+	 -->
+	<resultMap type="Emp2" id="Emp2ResultMap">
+		<!-- id表示查詢結果中的primary key (唯一標示)
+			column:查詢出來的欄位名
+			property:type指定pojo的屬性名
+		 -->
+		<id column="no" property="empno"/>
+		<!-- result對其於普通欄位定義 -->
+		<result column="name" property="ename"/>
+	</resultMap>
+	
+	<!-- 員工、部門resultMap -->
+	<resultMap type="idv.jay.persistent.Vo.Emp2" id="Emp_DeptResultMap">
+		<!-- 配置映射的員工資訊 -->
+		<!-- id: 指定查詢欄位中的唯一值，如為雙主鍵，則設置多個id
+		column: table欄位; property: java屬性 -->
+		<id column="empno" property="empno"/>
+		<result column="ename" property="ename"/>
+		<result column="job" property="job"/>
+		<result column="hiredate" property="hiredate"/>
+		<result column="sal" property="sal"/>
+		<result column="comm" property="comm"/>
+		<result column="deptno" property="deptno"/>
+		<!-- 配置映射的關聯部門資訊 -->
+		<!-- association: 用於映射關聯查詢單一物件的資訊
+		property: 指定要將關聯查詢的部門資訊映射到emp中的哪個屬性 -->
+		<association property="dept" javaType="idv.jay.persistent.Vo.Dept2">
+			<!-- id: 關聯查詢部門的唯一值
+			column: 指定部門唯一值的欄位
+			javaType: 映射到dept2的哪個屬性 -->
+			<id column="deptno" property="deptno"/>
+			<result column="dname" property="dname"/>
+			<result column="loc" property="loc"/>
+		</association>
+	</resultMap>
+	
+	
+	<!-- 員工多條件查詢，使用動態sql -->
+	<select id="findEmpByNameAndDep" parameterType="Emp2" resultType="Emp2">
+		select * from emp2
+		<!-- where標籤可自動去掉條間中第一個and -->
+		<where>
+			<!-- 引用sql片段，如refid引用的sql片段不再此mapper文件中，前面需加namespace -->
+			<include refid="query_emp_where"></include>
+		</where>
+	</select>
+	
+	
 	<!-- parameterType:指定輸入參數的型別 。
 		 #{}:表示一個佔位符號，等同於'?'。
 		 #{empno}:其中的empno為接受輸入的參數名稱，如輸入參數型態為基本型別，
 		 參數名稱可以任意。-->
 	<!-- resultType:指定sql輸出結果所映射的java物件的型別 -->
-	
-	<select id="findEmpById" parameterType="int" resultType="idv.jay.persistent.Vo.Emp2">
+	<select id="findEmpById" parameterType="int" resultType="Emp2">
 		select * from emp2 where empno = #{empno}
+	</select>
+	
+	<!-- 使用resultMap進行結果映射
+		resultMap:指定定義好的resultMap的id，如果這個resultMap在其他的mapper文件中，前面需加namespace
+	 -->
+	<select id="findEmpByIdResultMap" parameterType="int" resultMap="Emp2ResultMap">
+		select empno no, ename name from emp2 where empno = #{empno}
 	</select>
 	
 	<!-- 根據員工姓名模糊查詢員工，可能有多筆結果 -->
@@ -26,7 +99,7 @@
 		 ${}:表示串接sql字串，將接收到的參數不加任何修飾串接到sql中。 
 		 使用${}會引起sql injection。
 		 使用${value}:如傳入的參數型態為基本型別，則${}中只能使用value -->
-	<select id="findEMP2ByName" parameterType="java.lang.String" resultType="idv.jay.persistent.Vo.Emp2">
+	<select id="findEMP2ByName" parameterType="java.lang.String" resultType="Emp2">
 		select * from emp2 where ename like '%${value}%'
 	</select>
 	
@@ -36,7 +109,7 @@
 		 keyProperty: 將查詢到的主鍵值設置到 parameterType指定物件的哪個屬性
 		 order: selectKey的執行順序，相對於insert來說
 		 resultType: 指定selectKey的回傳結果 -->
-	<insert id="insertEmp" parameterType="idv.jay.persistent.Vo.Emp2">
+	<insert id="insertEmp" parameterType="Emp2">
 		<selectKey keyProperty="empno" order="AFTER" resultType="java.lang.Integer">
 			select emp2_seq.currval from dual
 		</selectKey>
@@ -51,7 +124,7 @@
 	<!-- 更改員工資訊 -->
 	<!-- 注意: 必須要有主鍵
 			      用<set>標籤會自動幫串接set -->
-	<update id="updateEmp" parameterType="idv.jay.persistent.Vo.Emp2">
+	<update id="updateEmp" parameterType="Emp2">
 		update emp2
 		<set>
 			ename = #{ename}, job = #{job}, hiredate = #{hiredate}, sal = #{sal},
@@ -59,4 +132,58 @@
 		</set>
 		where empno = #{empno}
 	</update>
+	
+	<!-- foreach多個編號查詢 -->
+	<select id="findEmpsById" parameterType='java.util.Map' resultType='emp2'>
+		select * from emp2 
+		<where>
+			<if test="nos != null">
+				<!-- 使用foreach迭代傳入list
+					collection: 指定輸入參數的集合屬性
+					item: 每個迭代的元素
+					open: 開始迭代的拼接字串         
+					close: 結束跌代時需拼接得字串
+					separator: 迭帶兩個元素中間需要拼接的字串
+				 -->
+				 <!-- 實作 and (empno = 7001 or empno = 7002) -->
+<!-- 				 and -->
+<!-- 				<foreach collection="nos" item="empno" open="(" close=")" separator="or"> -->
+<!-- 					empno = #{empno} -->
+<!-- 				</foreach> -->
+				
+				<!-- 實作 and empno in(7001,7002) -->
+				and
+				<foreach collection="nos" item="empno" open="empno in(" close=")" separator=",">
+					#{empno}
+				</foreach>
+			</if>
+		</where>
+	</select>
+	
+	<!-- 高級映射 -->
+	<!-- 員工、部門一對一查詢 -->
+	<select id="findEmpDept" resultType="idv.jay.persistent.Vo.EmpExtend">
+		SELECT
+		    emp2.*,
+		    dept2.dname,
+		    dept2.loc
+		FROM
+		    emp2,
+		    dept2
+		WHERE
+		    emp2.deptno = dept2.deptno
+	</select>
+	
+	<!-- 員工、部門一對一查詢，使用resultMap進行映射 -->
+	<select id="findEmpDeptResultMap" resultMap="Emp_DeptResultMap">
+		SELECT
+		    emp2.*,
+		    dept2.dname,
+		    dept2.loc
+		FROM
+		    emp2,
+		    dept2
+		WHERE
+		    emp2.deptno = dept2.deptno
+	</select>
 </mapper>

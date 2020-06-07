@@ -19,6 +19,14 @@ public class Emp2 implements Serializable{
 	private double sal;
 	private double comm;
 	private int deptno;
+	private Dept2 dept;
+	
+	public Dept2 getDept() {
+		return dept;
+	}
+	public void setDept(Dept2 dept) {
+		this.dept = dept;
+	}
 	public int getEmpno() {
 		return empno;
 	}

@@ -3,7 +3,23 @@
   PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
+	<!-- 配置屬性文件 properties-->
 	<properties resource = 'testDb.properties'/>
+	
+	<!-- 配置自訂義型別名稱 -->
+	<typeAliases>
+		<!-- 針對一種型別別命定義
+			type: 型別路徑
+			alias: 別名
+		 -->
+<!-- 		 <typeAlias type="idv.jay.persistent.Vo.Emp2" alias="Emp2"/> -->
+		 
+		 <!-- 定義多個別名
+		 	指定package的名稱，mybatis自動掃描package中的class，自動定義別名，就是class的名稱(大小寫皆可)
+		  -->
+		  <package name="idv.jay.persistent.Vo"/>
+	</typeAliases>
+	
 	<environments default = 'development'>
 		<environment id = 'development'>
 			<transactionManager type = 'jdbc'/>
@@ -17,6 +33,20 @@
 	</environments>
 	<!-- 注入映射mapper.xml  -->
 	<mappers>
-		<mapper resource="testMybatis/EMP2.xml"/>
+		<!-- 通過 resource 一次載入單一映射文件 -->
+		<mapper resource="nativeMybatisMapping/EMP2.xml"/>
+		<mapper resource="mybatisMapper/emp2Mapper.xml"/>
+		
+		<!-- 通過mapper介面載入單一映射文件
+			須遵循一些規範:
+				須將mapper介面及mapper.xml的名稱保持一致且在同個目錄當中
+				前提必須使用mapper代理方法開發	
+		 -->
+<!-- 		 <mapper class="idv.jay.persistent.dao.Emp2Mapper"/> -->
+
+		<!-- 批量載入mapper 
+			須遵循以上一樣的開發規泛
+		-->
+<!-- 		<package name="idv.jay.persistent.dao"/> -->
 	</mappers>
 </configuration>
