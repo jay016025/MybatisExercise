@@ -28,4 +28,5 @@ public interface Emp2_DAO {
 	 * @param id
 	 */
 	void deleteEmp(int id);
+
 }

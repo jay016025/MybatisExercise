@@ -186,4 +186,38 @@
 		WHERE
 		    emp2.deptno = dept2.deptno
 	</select>
+	
+	<!-- 延遲載入的resultMap -->
+	<resultMap type="Emp2" id="EmpDeptLazyLoadingResultMap">
+		<!-- 對員工資訊做映射配置 -->
+		<id column="empno" property="empno"/>
+		<result column="ename" property="ename"/>
+		<result column="job" property="job"/>
+		<result column="hiredate" property="hiredate"/>
+		<result column="sal" property="sal"/>
+		<result column="comm" property="comm"/>
+		<result column="deptno" property="deptno"/>
+		<!-- 實作對部門資訊延遲載入 -->
+		<association property="dept" javaType="idv.jay.persistent.Vo.Dept2"
+			 select="idv.jay.persistent.dao.Dept2Mapper.findDeptById" column="deptno">
+			<!-- 實作對部門資訊延遲載入
+			select: 指定延遲載入須執行的statement的id (這裡的情況是需要指定根據部門編號查詢的statement的id)
+			column: 指定員工資訊中關聯部門資訊的欄位，這裡是deptno
+			 -->
+		</association>
+	</resultMap>
+	
+	<!-- 員工、部門一對一關聯查詢，部門資訊使用延遲載入 -->
+	<select id="findEmpDeptLazyLoading" resultMap="EmpDeptLazyLoadingResultMap">
+		SELECT
+		    empno,
+		    ename,
+		    job,
+		    hiredate,
+		    sal,
+		    comm,
+		    deptno
+		FROM
+		    emp2
+	</select>
 </mapper>

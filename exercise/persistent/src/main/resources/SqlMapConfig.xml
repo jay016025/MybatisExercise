@@ -5,7 +5,14 @@
 <configuration>
 	<!-- 配置屬性文件 properties-->
 	<properties resource = 'testDb.properties'/>
-	
+	<settings>
+		<!-- 延遲載入設定 start -->
+		<!-- 打開延遲載入 -->
+		<setting name="lazyLoadingEnabled" value="true"/>
+		<!-- 關閉積極載入 -->
+		<setting name="aggressiveLazyLoading" value="false"/>
+		<!-- 延遲載入設定 end -->
+	</settings>
 	<!-- 配置自訂義型別名稱 -->
 	<typeAliases>
 		<!-- 針對一種型別別命定義
@@ -35,7 +42,8 @@
 	<mappers>
 		<!-- 通過 resource 一次載入單一映射文件 -->
 		<mapper resource="nativeMybatisMapping/EMP2.xml"/>
-		<mapper resource="mybatisMapper/emp2Mapper.xml"/>
+		<mapper resource="mybatisMapper/Emp2Mapper.xml"/>
+		<mapper resource="mybatisMapper/Dept2Mapper.xml"/>
 		
 		<!-- 通過mapper介面載入單一映射文件
 			須遵循一些規範:

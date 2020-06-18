@@ -27,7 +27,7 @@
 		    <artifactId>ojdbc7</artifactId>
 		    <version>12.1.0</version>
 		</dependency>
-
+		<!-- log4j2實作slf4j,實現slf4j實作層 -->
   		<dependency>
 		    <groupId>org.apache.logging.log4j</groupId>
 		    <artifactId>log4j-core</artifactId>
@@ -40,6 +40,24 @@
 		    <version>4.0.1</version>
 		    <scope>provided</scope>
 		</dependency>
+		
+		<!-- 使用slf4j管理日誌框架
+		可方便更換實作的日誌框架,而無須更動到程式碼 -->
+		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+		<dependency>
+		    <groupId>org.slf4j</groupId>
+		    <artifactId>slf4j-api</artifactId>
+		    <version>1.8.0-beta4</version>
+		</dependency>
+		<!-- slf4j與log4j中間層 -->
+		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12 -->
+		<dependency>
+		    <groupId>org.slf4j</groupId>
+		    <artifactId>slf4j-log4j12</artifactId>
+		    <version>1.8.0-beta4</version>
+		    <scope>test</scope>
+		</dependency>
+		
   	</dependencies>
   </dependencyManagement>
   

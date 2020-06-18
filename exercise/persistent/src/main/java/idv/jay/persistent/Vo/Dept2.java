@@ -1,12 +1,16 @@
 package idv.jay.persistent.Vo;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Dept2 implements Serializable{
 	private static final long serialVersionUID = 1L;
+	
 	private Integer deptno;
 	private String dname;
 	private String loc;
+	private List<Emp2> emps;
+	
 	public Integer getDeptno() {
 		return deptno;
 	}
@@ -24,6 +28,12 @@ public class Dept2 implements Serializable{
 	}
 	public void setLoc(String loc) {
 		this.loc = loc;
+	}
+	public List<Emp2> getEmps() {
+		return emps;
+	}
+	public void setEmps(List<Emp2> emps) {
+		this.emps = emps;
 	}
 	@Override
 	public String toString() {

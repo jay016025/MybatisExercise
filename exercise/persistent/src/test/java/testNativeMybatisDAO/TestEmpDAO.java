@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import org.junit.jupiter.api.Test;
 
@@ -72,5 +74,22 @@ public class TestEmpDAO {
 		List<Emp2> list = Mybatis_dataSource.getResource().openSession()
 				.getMapper(Emp2Mapper.class).findEmpDeptResultMap();
 		System.out.println(list);
+	}
+	
+	@Test
+	public void testLog4j() {
+		org.apache.logging.log4j.core.Logger logger = (org.apache.logging.log4j.core.Logger) org.apache.logging.log4j.LogManager.getLogger(org.apache.logging.log4j.LogManager.ROOT_LOGGER_NAME);
+		logger.info("test");
+		logger.error("testErr");
+	}
+	
+//	測試延遲載入查詢
+	@Test
+	public void testFindEmpDeptLazyLoading() {
+		List<Emp2> emps = Mybatis_dataSource.getResource().openSession()
+				.getMapper(Emp2Mapper.class).findEmpDeptLazyLoading();
+		
+		for(Emp2 emp : emps)
+			System.out.println(emp.getDept());
 	}
 }

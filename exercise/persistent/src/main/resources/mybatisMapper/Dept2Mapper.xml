@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="idv.jay.persistent.dao.Dept2Mapper">
+	<!-- 查詢部門及員工resultMap -->
+	<resultMap type="idv.jay.persistent.Vo.Dept2" id="DeptAndEmpResultMap">
+		<!-- 部門資訊
+		一個部門資訊有多條員工資訊，使用collection映射
+		collection: 對關聯查詢多筆紀錄映射到集合物件中
+		property: 將關聯映射到的多筆紀錄映射到Dept2.java中的哪個屬性
+		ofType: 指定映射到集合屬性中泛型所指定的型別
+		 -->
+		<!-- 映射的部門資訊，不重複 -->
+		 <id column="deptno" property="deptno"/>
+		 <result column="dname" property="dname"/>
+		 <result column="loc" property="loc"/>
+		<!-- 映射的多筆員工資訊 -->
+		<collection property="emps" ofType="Emp2">
+			<!-- id: 員工資訊的唯一值
+			column: 查詢出來的欄位名稱
+			property: 要將員工的唯一值映射到Emp2.java的哪個屬性
+			 -->
+			<id column="empno" property="empno"/>
+			<result column="ename" property="ename"/>
+			<result column="job" property="job"/>
+			<result column="hiredate" property="hiredate"/>
+			<result column="sal" property="sal"/>
+			<result column="comm" property="comm"/>
+		</collection>
+	</resultMap>
+	
+	<select id="findDeptAndEmp" resultMap="DeptAndEmpResultMap">
+		SELECT
+		    dept2.deptno,
+		    dept2.dname,
+		    dept2.loc,
+		    emp2.empno,
+		    emp2.ename,
+		    emp2.job,
+		    emp2.hiredate,
+		    emp2.sal,
+		    emp2.comm
+		FROM
+		    dept2
+		    JOIN emp2 ON dept2.deptno = emp2.deptno
+		ORDER BY dept2.deptno
+	</select>
+	
+	<select id="findDeptById" parameterType="int" resultType="idv.jay.persistent.Vo.Dept2">
+		SELECT
+		    deptno,
+		    dname,
+		    loc
+		FROM
+		    dept2
+		<where>
+			deptno = #{deptno}
+		</where>
+	</select>
+</mapper>

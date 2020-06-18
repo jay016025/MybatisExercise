@@ -67,4 +67,11 @@ public interface Emp2Mapper {
 	 * @return
 	 */
 	List<Emp2> findEmpDeptResultMap();
+	
+	
+	/**
+	 * 查詢員工關聯查詢部門資訊，使用延遲載入
+	 * @return
+	 */
+	List<Emp2> findEmpDeptLazyLoading();
 }
