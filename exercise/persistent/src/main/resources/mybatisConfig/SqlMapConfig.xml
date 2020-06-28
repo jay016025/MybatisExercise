@@ -12,6 +12,9 @@
 		<!-- 關閉積極載入 -->
 		<setting name="aggressiveLazyLoading" value="false"/>
 		<!-- 延遲載入設定 end -->
+		
+		<!-- 打開mybatis快取,預設就是打開的,這邊方便維護所以寫出來 -->
+		<setting name="cacheEnabled" value="true"/>
 	</settings>
 	<!-- 配置自訂義型別名稱 -->
 	<typeAliases>

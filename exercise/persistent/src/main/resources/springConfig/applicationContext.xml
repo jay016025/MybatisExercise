@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- 資料庫配置: -->
+	<!-- Spring 3.1之後的版本 -->
+    <!-- 讀取properties檔 -->
+    <context:property-placeholder location="classpath:testDb.properties" file-encoding="UTF-8" />
+    <!-- 配置連線資訊 -->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.AbstractComboPooledDataSource"
+    	destroy-method="close">
+    	<property name="driverClass" value="${jdbc.driver}"/>
+		<property name="jdbcUrl" value="${jdbc.url}"/>
+		<property name="user" value="${jdbc.username}"/>
+		<property name="password" value="${jdbc.password}"/>
+		<!-- 最大連線數 -->
+		<property name="MaxActive" value="10"/>
+		<!-- 等待連線的最大值 -->
+		<property name="maxIdle"/ value="5">
+    </bean>
+	
+	<!-- SqlSessionFactory: 去整合包找bean，複製全路徑 -->
+    <bean id="SqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">  
+    	<!-- 載入mybatis配置文件 -->
+    	<property name="configcation" value="mybatisConfig/SqlMapConfig.xml"/>
+    	<!-- 載入資料庫 -->
+    	<property name="dataSource" ref="dataSource"/>
+    </bean>
+    
+</beans>

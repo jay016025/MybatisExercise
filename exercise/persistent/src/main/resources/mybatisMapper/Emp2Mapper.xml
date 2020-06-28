@@ -5,12 +5,17 @@
 <!-- namespace命名，作用是對sql做分類隔離管理
 	 注意:使用Mapper代理方法開發，namespace代表的是mapper.java介面的位址 -->
 <mapper namespace="idv.jay.persistent.dao.Emp2Mapper">
-
+	
 	<!-- 在此文件中會設置許多sql -->
 	<!-- 需求:通過id查詢員工資料 -->
 	<!-- 通過select標籤進行DB查詢 
 		id:標識映射文中的sql，將sql封裝到mappedStatement，所以id稱為Statemaent的id	-->
 	
+	<!-- 開啟本mapper的快取區域標籤
+	type: 指定cache介面時做的類別，mybatis預設使用 PerpetualCache
+	要和 ehcache整合，需配置type為ehcache實作cache介面的類別
+	 -->
+	<cache type=""/>
 	
 	<!-- 定義sql片段
 		id:此sql片段的名稱
