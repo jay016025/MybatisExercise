@@ -3,8 +3,10 @@
   PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-	<!-- 配置屬性文件 properties-->
-	<properties resource = 'testDb.properties'/>
+	<!-- 配置屬性文件 properties
+	和Spring整合後由spring接管
+	-->
+<!-- 	<properties resource = 'testDb.properties'/> -->
 	<settings>
 		<!-- 延遲載入設定 start -->
 		<!-- 打開延遲載入 -->
@@ -30,23 +32,24 @@
 		  <package name="idv.jay.persistent.Vo"/>
 	</typeAliases>
 	
-	<environments default = 'development'>
-		<environment id = 'development'>
-			<transactionManager type = 'jdbc'/>
-			<dataSource type = 'POOLED'>
-				<property name = 'driver' value = '${jdbc.driver}'/>
-				<property name = 'url' value = '${jdbc.url}'/>
-				<property name = 'username' value = '${jdbc.username}'/>
-				<property name = 'password' value = '${jdbc.password}'/>
-			</dataSource>
-		</environment>
-	</environments>
+	<!-- 和Spring整合後由spring接管 -->
+<!-- 	<environments default = 'development'> -->
+<!-- 		<environment id = 'development'> -->
+<!-- 			<transactionManager type = 'jdbc'/> -->
+<!-- 			<dataSource type = 'POOLED'> -->
+<!-- 				<property name = 'driver' value = '${jdbc.driver}'/> -->
+<!-- 				<property name = 'url' value = '${jdbc.url}'/> -->
+<!-- 				<property name = 'username' value = '${jdbc.username}'/> -->
+<!-- 				<property name = 'password' value = '${jdbc.password}'/> -->
+<!-- 			</dataSource> -->
+<!-- 		</environment> -->
+<!-- 	</environments> -->
 	<!-- 注入映射mapper.xml  -->
 	<mappers>
 		<!-- 通過 resource 一次載入單一映射文件 -->
-		<mapper resource="nativeMybatisMapping/EMP2.xml"/>
-		<mapper resource="mybatisMapper/Emp2Mapper.xml"/>
-		<mapper resource="mybatisMapper/Dept2Mapper.xml"/>
+<!-- 		<mapper resource="nativeMybatisMapping/EMP2.xml"/> -->
+<!-- 		<mapper resource="mybatisMapper/Emp2Mapper.xml"/> -->
+<!-- 		<mapper resource="mybatisMapper/Dept2Mapper.xml"/> -->
 		
 		<!-- 通過mapper介面載入單一映射文件
 			須遵循一些規範:
@@ -56,7 +59,8 @@
 <!-- 		 <mapper class="idv.jay.persistent.dao.Emp2Mapper"/> -->
 
 		<!-- 批量載入mapper 
-			須遵循以上一樣的開發規泛
+			須遵循以上一樣的開發規泛，
+			和spring整合後，使用spring掃描器，這裡不需配置
 		-->
 <!-- 		<package name="idv.jay.persistent.dao"/> -->
 	</mappers>

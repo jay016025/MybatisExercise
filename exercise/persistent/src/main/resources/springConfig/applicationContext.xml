@@ -1,32 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans
-        https://www.springframework.org/schema/beans/spring-beans.xsd">
-	
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xsi:schemaLocation="http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.3.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.3.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
+		http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+		
 	<!-- 資料庫配置: -->
 	<!-- Spring 3.1之後的版本 -->
     <!-- 讀取properties檔 -->
     <context:property-placeholder location="classpath:testDb.properties" file-encoding="UTF-8" />
-    <!-- 配置連線資訊 -->
-    <bean id="dataSource" class="com.mchange.v2.c3p0.AbstractComboPooledDataSource"
+    <!-- 配置連線資訊
+    destroy-method: 當連線不使用時，歸還連線池的方法 = close
+     -->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
     	destroy-method="close">
     	<property name="driverClass" value="${jdbc.driver}"/>
 		<property name="jdbcUrl" value="${jdbc.url}"/>
 		<property name="user" value="${jdbc.username}"/>
 		<property name="password" value="${jdbc.password}"/>
 		<!-- 最大連線數 -->
-		<property name="MaxActive" value="10"/>
+		<property name="maxPoolSize" value="10"/>
 		<!-- 等待連線的最大值 -->
-		<property name="maxIdle"/ value="5">
+		<property name="maxIdleTime" value="5"/>
     </bean>
 	
 	<!-- SqlSessionFactory: 去整合包找bean，複製全路徑 -->
     <bean id="SqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">  
     	<!-- 載入mybatis配置文件 -->
-    	<property name="configcation" value="mybatisConfig/SqlMapConfig.xml"/>
+    	<property name="configLocation" value="mybatisConfig/SqlMapConfig.xml"/>
     	<!-- 載入資料庫 -->
     	<property name="dataSource" ref="dataSource"/>
+    </bean>
+    
+    <!-- spring-mybatis原始dao
+    dao實作需注入sqlSession工廠
+     -->
+    <bean id="empDao" class="idv.jay.persistent.dao_impl.Emp2_dao_impl">
+    	<property name="sqlSessionFactory" ref="SqlSessionFactory"/>
+    </bean>
+    
+    <!-- mapper代理配置 -->
+<!--     <bean id="empMapper" class="org.mybatis.spring.mapper.MapperFactoryBean"> -->
+<!--     	mapperInterface: 指定mapper介面 -->
+<!--     	<property name="mapperInterface" value="idv.jay.persistent.dao.Emp2Mapper"/> -->
+<!--     	<property name="sqlSessionFactory" ref="SqlSessionFactory"/> -->
+<!--     </bean> -->
+    
+    <!-- mapper批量掃描，從mapper包中掃描出介面，自動創建代理物件，被再spring中注射 
+    	須遵循規範: 須將mapper介面及mapper.xml的名稱保持一致且在同個目錄當中
+    	自動掃描bean的id為mapper.java的class名稱 (開頭小寫) 
+    -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+    	<!-- basePackage: 指定掃描的package
+    	如需掃描多個package，每個package以半形逗號隔開
+    	 -->
+    	<property name="basePackage" value="idv.jay.persistent.dao"/>
+    	<!-- 這裡需使用sqlSessionFactoryBeanName 而不是sqlSessionFactory屬性 -->
+    	<property name="sqlSessionFactoryBeanName" value="SqlSessionFactory"/>
     </bean>
     
 </beans>

@@ -15,7 +15,7 @@
 	type: 指定cache介面時做的類別，mybatis預設使用 PerpetualCache
 	要和 ehcache整合，需配置type為ehcache實作cache介面的類別
 	 -->
-	<cache type=""/>
+	<cache/>
 	
 	<!-- 定義sql片段
 		id:此sql片段的名稱
