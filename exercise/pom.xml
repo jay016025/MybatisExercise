@@ -137,5 +137,6 @@
   
   <modules>
     <module>persistent</module>
+    <module>mybatis_generator</module>
   </modules>
 </project>

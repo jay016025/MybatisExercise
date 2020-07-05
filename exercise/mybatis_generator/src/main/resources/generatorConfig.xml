@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+	<!-- 引入配置檔 -->
+	<properties resource="application.properties"/>
+
+	<!-- 資料庫driver所在路徑 -->
+  	<classPathEntry location="${generator.location}" />
+	<!-- 定義逆向工程，一個資料庫一個context -->
+  	<context id="MybatisGenerator" targetRuntime="MyBatis3">
+  		<!-- 產生的pojo將實作Serializable -->
+		<plugin type="org.mybatis.generator.plugins.SerializablePlugin"/>
+  	
+  		<!-- 資料庫連線 -->
+	    <jdbcConnection driverClass="${generator.driver}"
+	        connectionURL="${generator.url}"
+	        userId="${generator.username}"
+	        password="${generator.password}">
+	    </jdbcConnection>
+		
+		<!-- 類型轉換 default=false: 把數字類型轉換為Integer， true: 把數字類型轉換為BigDecimal -->
+	    <javaTypeResolver >
+	      <property name="forceBigDecimals" value="false" />
+	    </javaTypeResolver>
+		
+		<!-- 定義pojo
+		enableSubPackages: 是否在目前路徑再產生一層schema
+		trimStrings: 清除資料庫值前後空格
+		 -->
+	    <javaModelGenerator targetPackage="mybatis_generator.pojo" targetProject="./src/main/java">
+	      <property name="enableSubPackages" value="false" />
+	      <property name="trimStrings" value="true" />
+	    </javaModelGenerator>
+		
+		<!-- 定義mapper.xml -->
+	    <sqlMapGenerator targetPackage="mybatis_generator.dao"  targetProject="./src/main/java">
+	      <property name="enableSubPackages" value="false" />
+	    </sqlMapGenerator>
+	
+		<!-- 定義dao介面 -->
+	    <javaClientGenerator type="XMLMAPPER" targetPackage="mybatis_generator.dao"  targetProject="./src/main/java">
+	      <property name="enableSubPackages" value="false" />
+	    </javaClientGenerator>
+		
+		<!-- 要產生的table配置
+		schema: 資料庫名稱
+		tableName: 表格名稱
+		domainObjectName: 要產生的pojo名稱
+		 -->
+<!-- 	    <table schema="DB2ADMIN" tableName="ALLTYPES" domainObjectName="Customer" > -->
+<!-- 	      <property name="useActualColumnNames" value="true"/> -->
+<!-- 	      <generatedKey column="ID" sqlStatement="DB2" identity="true" /> -->
+<!-- 	      <columnOverride column="DATE_FIELD" property="startDate" /> -->
+<!-- 	      <ignoreColumn column="FRED" /> -->
+<!-- 	      <columnOverride column="LONG_VARCHAR_FIELD" jdbcType="VARCHAR" /> -->
+<!-- 	    </table> -->
+		<table schema="DA104" tableName="EMP2">
+			<property name="useActualColumnNames" value="true"/>
+			<!-- 自增主建值設定 -->
+			<generatedKey column="empno" sqlStatement="select EMP2_SEQ from dual"/>
+		</table>
+		<table schema="DA104" tableName="DEPT2">
+			<property name="useActualColumnNames" value="true"/>
+		</table>
+  </context>
+</generatorConfiguration>
