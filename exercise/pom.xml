@@ -15,7 +15,7 @@
         <!-- 版本 -->  
         <tomcat-plugin-version>2.2</tomcat-plugin-version>
         <maven-compiler-plugin-version>3.8.1</maven-compiler-plugin-version>
-        <Spring-version>5.2.6.RELEASE</Spring-version>
+        <Spring-version>5.2.20.RELEASE</Spring-version>
   </properties>
   
   
